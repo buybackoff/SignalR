@@ -170,6 +170,11 @@ namespace Microsoft.AspNet.SignalR.Client
             }
         }
 
+        bool IsCallbackMapEmpty()
+        {
+            return _callbacks.Count == 0;
+        }
+
         public void RemoveCallback(string callbackId)
         {
             Action<HubResult> callback;
