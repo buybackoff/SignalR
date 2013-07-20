@@ -170,7 +170,7 @@ namespace Microsoft.AspNet.SignalR.Client
             }
         }
 
-        bool IsCallbackMapEmpty()
+        public bool IsCallbackMapEmpty()
         {
             return _callbacks.Count == 0;
         }

@@ -135,14 +135,29 @@ namespace Microsoft.AspNet.SignalR.Client.Tests
         [Fact]
         public void HubCallbacksClearedOnDisconnect()
         {
-            var connection = new Mock<IHubConnection>();
+            IHubConnection connection = new HubConnection("http://foo");
 
-            connection.Setup(m => m.Send(It.IsAny<string>()))
-                      .Returns(TaskAsyncHelper.Empty);
+            connection.RegisterCallback(result => { });
 
-            var hubProxy = new HubProxy(connection.Object, "foo");
+            ((HubConnection)connection).Start();
 
-            var result = hubProxy.Invoke<object>("Anything").Result;
+            connection.Disconnect();
+
+            Assert.True(connection.IsCallbackMapEmpty());
+        }
+
+        [Fact]
+        public void HubCallbacksClearedOnReconnect()
+        {
+            IHubConnection connection = new HubConnection("http://foo");
+
+            connection.RegisterCallback(result => { });
+
+            ((HubConnection)connection).Start();
+
+            ((IConnection)connection).OnReconnecting();
+
+            Assert.True(connection.IsCallbackMapEmpty());
         }
     }
 }
