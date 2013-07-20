@@ -170,6 +170,15 @@ namespace Microsoft.AspNet.SignalR.Client
             }
         }
 
+        public void RemoveCallback(string callbackId)
+        {
+            Action<HubResult> callback;
+            if (_callbacks.TryGetValue(callbackId, out callback))
+            {
+                _callbacks.Remove(callbackId);
+            }
+        }
+
         private static string GetUrl(string url, bool useDefaultUrl)
         {
             if (!url.EndsWith("/", StringComparison.Ordinal))
@@ -183,6 +192,31 @@ namespace Microsoft.AspNet.SignalR.Client
             }
 
             return url;
+        }
+
+        protected override void OnClosed()
+        {
+            ClearInvocationCallbacks("Connection closed");
+            base.OnClosed();
+        }
+
+        protected override void TryReconnecting()
+        {
+            ClearInvocationCallbacks("Connection lost, trying to reconnect");
+            base.TryReconnecting();
+        }
+
+        private void ClearInvocationCallbacks(string error)
+        {
+            HubResult result = new HubResult();
+            result.Error = error;
+
+            foreach (KeyValuePair<string, Action<HubResult>> callback in _callbacks)
+            {
+                callback.Value(result);
+            }
+
+            _callbacks.Clear();
         }
     }
 }

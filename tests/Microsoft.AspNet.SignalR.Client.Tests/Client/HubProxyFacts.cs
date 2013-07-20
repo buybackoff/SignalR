@@ -131,5 +131,18 @@ namespace Microsoft.AspNet.SignalR.Client.Tests
             hubProxy.InvokeEvent("foo", new[] { JToken.FromObject(1) });
             Assert.True(eventRaised);
         }
+
+        [Fact]
+        public void HubCallbacksClearedOnDisconnect()
+        {
+            var connection = new Mock<IHubConnection>();
+
+            connection.Setup(m => m.Send(It.IsAny<string>()))
+                      .Returns(TaskAsyncHelper.Empty);
+
+            var hubProxy = new HubProxy(connection.Object, "foo");
+
+            var result = hubProxy.Invoke<object>("Anything").Result;
+        }
     }
 }

@@ -569,11 +569,16 @@ namespace Microsoft.AspNet.SignalR.Client
                     _connectionData = null;
 
                     // TODO: Do we want to trigger Closed if we are connecting?
-                    if (Closed != null)
-                    {
-                        Closed();
-                    }
+                    OnClosed();
                 }
+            }
+        }
+
+        protected virtual void OnClosed()
+        {
+            if (Closed != null)
+            {
+                Closed();
             }
         }
 
@@ -673,7 +678,7 @@ namespace Microsoft.AspNet.SignalR.Client
             }
         }
 
-        private void OnError(Exception error)
+        protected virtual void OnError(Exception error)
         {
             Trace(TraceLevels.Events, "OnError({0})", error);
 
@@ -695,6 +700,11 @@ namespace Microsoft.AspNet.SignalR.Client
             // If the client tries to reconnect for longer the server will likely have deleted its ConnectionId
             // topic along with the contained disconnect message.
             _disconnectTimeoutOperation = SetTimeout(_disconnectTimeout, Disconnect);
+            TryReconnecting();
+        }
+
+        protected virtual void TryReconnecting()
+        {
             if (Reconnecting != null)
             {
                 Reconnecting();
