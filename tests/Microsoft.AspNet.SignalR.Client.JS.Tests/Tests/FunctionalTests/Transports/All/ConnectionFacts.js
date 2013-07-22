@@ -114,7 +114,7 @@ testUtilities.runWithAllTransports(function (transport) {
 
         connectionDataVerifierHub.client.pong = function () {
             // Verify that ping server flows through the connection data
-            $.signalR.transports._logic.pingServer(connection, transport).done(function () {
+            $.signalR.transports._logic.pingServer(connection).done(function () {
                 assert.comment("All requests contained connection data within the query string.");
                 end();
             }).fail(function () {
