@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR.Client;
 using Microsoft.AspNet.SignalR.Client.Hubs;
 using Microsoft.AspNet.SignalR.Tests.Utilities;
@@ -143,7 +144,7 @@ namespace Microsoft.AspNet.SignalR.Client.Tests
 
             connection.Disconnect();
 
-            Assert.True(connection.IsCallbackMapEmpty());
+            Assert.True(((HubConnection)connection).IsCallbackMapEmpty());
         }
 
         [Fact]
@@ -155,9 +156,34 @@ namespace Microsoft.AspNet.SignalR.Client.Tests
 
             ((HubConnection)connection).Start();
 
+
             ((IConnection)connection).OnReconnecting();
 
-            Assert.True(connection.IsCallbackMapEmpty());
+            Assert.True(((HubConnection)connection).IsCallbackMapEmpty());
+        }
+
+        [Fact]
+        public void HubCallbackClearedOnFailedInvocation()
+        {
+            var connection = new Mock<HubConnection>("http://foo");
+            var tcs = new TaskCompletionSource<object>();
+
+            tcs.TrySetCanceled();
+
+            connection.Setup(c => c.Send("data")).Returns(tcs.Task);
+            //connection.SetupGet(x => x.JsonSerializer).Returns(new JsonSerializer());
+
+            var hubProxy = new HubProxy(connection.Object, "foo");
+            //bool eventRaised = false;
+
+            //hubProxy.On("foo", () =>
+            //{
+            //    eventRaised = true;
+            //});
+
+            hubProxy.Invoke("foo", "arg1");
+            Assert.True(connection.Object.IsCallbackMapEmpty());
+            //Assert.True(eventRaised);
         }
     }
 }

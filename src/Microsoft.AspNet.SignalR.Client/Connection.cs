@@ -587,7 +587,7 @@ namespace Microsoft.AspNet.SignalR.Client
         /// </summary>
         /// <param name="data">The data to send.</param>
         /// <returns>A task that represents when the data has been sent.</returns>
-        public Task Send(string data)
+        public virtual Task Send(string data)
         {
             if (State == ConnectionState.Disconnected)
             {
