@@ -42,7 +42,7 @@ testUtilities.runWithAllTransports(function (transport) {
         });
 
         // Start the connection and ping the server every 1 second
-        connection.start({ transport: transport, pingInterval: 1 });
+        connection.start({ transport: transport, pingInterval: 1000 });
 
         // Cleanup
         return function () {
@@ -63,7 +63,7 @@ testUtilities.runWithAllTransports(function (transport) {
         };
 
         // Start the connection and ping the server every 1 second
-        connection.start({ transport: transport, pingInterval: 1 }).done(function () {
+        connection.start({ transport: transport, pingInterval: 1000 }).done(function () {
             setTimeout(function () {
                 var currentPingCount = pingCount;
 
@@ -72,7 +72,7 @@ testUtilities.runWithAllTransports(function (transport) {
                 setTimeout(function () {
                     assert.equal(currentPingCount, pingCount, "After calling stop ping interval no longer runs.");
 
-                    connection.start({ transport: transport, pingInterval: .5 }).done(function () {
+                    connection.start({ transport: transport, pingInterval: 500 }).done(function () {
                         setTimeout(function () {
                             assert.equal(currentPingCount + 1, pingCount, "After restarting the connection the ping interval can be reconfigured and continues execution.");
                             end();

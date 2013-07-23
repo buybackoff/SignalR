@@ -84,7 +84,7 @@
             if (!config.pingIntervalId && config.pingInterval) {
                 connection._.pingIntervalId = window.setInterval(function () {
                     signalR.transports._logic.pingServer(connection).fail(onFail);
-                }, config.pingInterval * 1000);
+                }, config.pingInterval);
             }
         },
 
@@ -342,7 +342,7 @@
             /// <param name="callback" type="Function">A callback function to execute when the connection has started</param>
             var connection = this,
                 config = {
-                    pingInterval: 300,
+                    pingInterval: 300000,
                     waitForPageLoad: true,
                     transport: "auto",
                     jsonp: false,
